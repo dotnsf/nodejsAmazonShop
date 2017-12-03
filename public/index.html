@@ -1,0 +1,118 @@
+<html>
+<head>
+<meta charset="utf8"/>
+<title>My Shop</title>
+<script type="text/javascript" src="//code.jquery.com/jquery-2.0.3.min.js"></script>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/css/bootstrap.min.css"/>
+<link rel="stylesheet" href="//maxcdn.bootstrapcdn.com/bootswatch/3.3.5/cerulean/bootstrap.min.css"/>
+<script src="//maxcdn.bootstrapcdn.com/bootstrap/3.3.1/js/bootstrap.min.js"></script>
+<link href="./colorbox.css" rel="stylesheet"/>
+<script type="text/javascript" src="./jquery.colorbox-min.js"></script>
+<script type="text/javascript">
+var limit = 30;
+var skip = 0;
+$(function(){
+  $('.iframe').colorbox({
+    iframe: true,
+    width: "90%",
+    height: "90%"
+  });
+});
+
+function getItems( limit, skip ){
+  $('#itemslistbody').html( '' );
+  $.ajax({
+    url: './items?limit=' + limit + '&skip=' + skip,
+    type: 'GET',
+    success: function( result ){
+      console.log( result );
+      if( result.status && result.body ){
+        var items = result.body;
+        var cnt = 1000;  // #all items
+        for( var i = 0; i < items.length; i ++ ){
+          var item = items[i];
+          var code = item.code;
+          var name = item.name;
+          var brand = item.brand;
+          var maker = item.maker;
+          var price = item.price;
+          var asin = item.asin;
+          var image_url = item.image_url;
+          var image_url2 = image_url.split( 'SL160' ).join( 'SL300' );
+          var link = asin ? 'http://www.amazon.co.jp/dp/' + asin + '?tag=' + settings.aws_assoc_tag + '&linkCode=as1&creative=6339' : '';
+          $('#itemslistbody').append( '<tr><td>' + code + '<br/><a class="single iframe" rel="external" href="' + image_url2 + '" title="' + name + '"><img src="' + image_url + '" width="30" height="30"/></a></td><td>' + ( link ? '<a target="_blank" href="' + link + '">' + name + '</a>' : name ) + '</td><td>' + brand + '</td><td>' + maker + '</td></tr>' );
+        }
+
+        var tr = '<tr><td align="left">';
+        if( skip > 0 ){
+          var newskip = ( skip < limit ? 0 : skip - limit );
+          tr += '<a href="#" onClick="getItems( ' + limit + ', ' + newskip + ' );">&lt;&lt;</a>';
+        }else{
+          tr += '&nbsp;';
+        }
+        tr += '</td><td colspan="2" align="middle">' + ( skip + 1 ) + ' - ' + ( skip + limit ) + ' / ' + cnt + '</td>';
+
+        tr += '<td align="right">';
+        if( skip + limit < cnt ){
+          tr += '<a href="#" onClick="getItems( ' + limit + ', ' + ( skip + limit ) + ' );">&gt;&gt;</a>';
+        }else{
+          tr += '&nbsp;';
+        }
+        tr += '</td></tr>';
+        $('#itemslistbody').append( tr );
+      }
+    },
+    error: function(){
+      console.log( "error" );
+    }
+  });
+}
+</script>
+<style>
+html, body, {
+  background-color: #ddddff;
+  height: 100%;
+  margin: 0px;
+  padding: 0px
+}
+#cboxOverlay {
+    background: #000;
+}
+#cboxLoadedContent {
+    background: #fff;
+}
+#cboxLoadedContent {
+  padding: 0;
+  overflow: auto;
+    -moz-box-shadow: 0px 1px 10px #000000;
+    -webkit-box-shadow: 0px 1px 10px #000000;
+    box-shadow: 0px 1px 10px #000000;
+}
+#cboxPrevious, #cboxNext, #cboxSlideshow, #cboxClose , #cboxTitle {
+  top: -30px;
+}
+#colorbox, #cboxOverlay, #cboxWrapper {
+  overflow: visible ;
+}
+#cboxTitle {
+  color: #fff;
+}
+#inline-content {/* インラインを使用する時のみ */
+    margin: 20px;
+}
+#ajax-wrap {/* ajaxを使用する時のみ */
+  margin: 20px;
+}
+</style>
+</head>
+<body>
+
+<table class="table table-bordered table-hobor table-condensed">
+  <thead>
+    <tr><th>#</th><th>NAME</th><th>BRAND</th><th>MAKER</th></tr>
+  </thead>
+  <tbody id='itemslistbody'>
+  </tbody>
+</table>
+</body>
+</html>
