@@ -1,5 +1,5 @@
 {
-    "name": "coffeebean",
+    "name": "nodejsAmazonShop",
     "version": "0.0.1",
     "scripts": {
         "start": "node app.js"
@@ -9,11 +9,10 @@
         "body-parser": "^1.17.2",
         "cfenv": "~1.0.0",
         "cloudant": "1.7.x",
-        "cors": "2.8.x",
         "ejs": "^2.3.4",
         "express": "4.1.x",
         "multer": "^1.1.0",
-        "request": "^2.81.0",
+        "request": "^2.81.0"
     },
     "repository": {},
     "engines": {

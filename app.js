@@ -13,7 +13,6 @@
 var express = require( 'express' ),
     cfenv = require( 'cfenv' ),
     cloudantlib = require( 'cloudant' ),
-    cors = require( 'cors' ),
     multer = require( 'multer' ),
     basicAuth = require( 'basic-auth-connect' ),
     bodyParser = require( 'body-parser' ),
@@ -103,7 +102,7 @@ app.post( '/items', function( req, res ){
           res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
           res.end();
         }else{
-          res.write( JSON.stringify( { status: true, body: body }, 2, null ) );
+          res.write( JSON.stringify( { status: true, aws_tag: sws_tag, body: body }, 2, null ) );
           res.end();
         }
       });
@@ -121,25 +120,33 @@ app.post( '/items', function( req, res ){
 
 
 //. item 一覧
-//. https://stackoverflow.com/questions/2534376/how-do-i-do-the-sql-equivalent-of-distinct-in-couchdb
-//. GET https://cloudant_username.cloudant.com/activities/_design/user_id_list/_view/user_id_list?group=true
 app.get( '/items', function( req, res ){
   if( db ){
-    var limit = app.query.limit ? app.query.limit : 30;
-    var skip = app.query.skip ? app.query.skip : 0;
-
-    db.list( { include_docs: true, limit: limit, skip: skip }, function( err, body ){
-      if( err ){
+    db.list( {}, function( err0, body0 ){
+      if( err0 ){
         res.status( 400 );
-        res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
+        res.write( JSON.stringify( { status: false, message: err0 }, 2, null ) );
         res.end();
       }else{
-        var items = [];
-        body.rows.forEach( function( element ){
-          items.push( element.key );
+        var cnt = body0.rows.length;
+        
+        var limit = req.query.limit ? req.query.limit : 30;
+        var skip = req.query.skip ? req.query.skip : 0;
+
+        db.list( { include_docs: true, limit: limit, skip: skip }, function( err, body ){
+          if( err ){
+            res.status( 400 );
+            res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
+            res.end();
+          }else{
+            var items = [];
+            body.rows.forEach( function( element ){
+              items.push( element );
+            });
+            res.write( JSON.stringify( { status: true, aws_tag: settings.aws_tag, cnt: cnt, items: items }, 2, null ) );
+            res.end();
+          }
         });
-        res.write( JSON.stringify( { status: true, body: items }, 2, null ) );
-        res.end();
       }
     });
   }else{
