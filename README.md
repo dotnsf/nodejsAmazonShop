@@ -12,7 +12,11 @@ Sample Web Shop with Amazon Affiliate
 
     - Cloudant NoSQL database service
 
-- Cloudant username & password
+        - Cloudant username & password
+
+    - cf tool need to be installed
+
+        - https://github.com/cloudfoundry/cli/releases
 
 
 ## Prefered requirement
@@ -39,6 +43,9 @@ Sample Web Shop with Amazon Affiliate
 
 - Deploy application into IBM Cloud,
 
+`$ cf login -a https://api.ng.bluemix.net/`
+`$ cf push appname`
+
 - or You can run application in your environment:
 
 `$ node app`
@@ -57,6 +64,17 @@ If you don't want to use sample data, you can follow these instructions:
 - Edit setttings.js, and edit prefered nodes from here: https://affiliate.amazon.co.jp/gp/associates/help/t100
 
 
+## (Option)How to get Amazon Associate ID(tag)
+
+You can affiliate your shop with them. Refer following page:
+
+http://dotnsf.blog.jp/archives/1062052263.html
+
+## (Option)How to get Amazon Product Advertisement API key/secret
+
+You can crawl and collect your prefered items with them. Refer following page:
+
+http://dotnsf.blog.jp/archives/1064227473.html
 
 ## Licensing
 
