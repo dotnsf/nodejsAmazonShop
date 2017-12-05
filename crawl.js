@@ -223,6 +223,18 @@ function getItemSearchAmazonAPI( node, min, max, page ){
                  if( listprice == '' ){
                    listprice = 0;
                  }
+
+                 if( asin ){
+                   var item = { asin: asin };
+                   if( ean ){ item['code'] = ean; }
+                   if( title ){ item['name'] = title; }
+                   if( listprice ){ item['price'] = listprice; }
+                   if( brand ){ item['brand'] = brand; }
+                   if( manufacturer ){ item['maker'] = manufacturer; }
+                   if( image_url ){ item['image_url'] = image_url; }
+
+                   console.log( JSON.stringify( item, 2, null ) );
+                 }
                }
             }
           }
