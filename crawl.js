@@ -1,6 +1,6 @@
 //. crawl.js
 
-var wait = 1300;   //. ウェイト（ミリ秒）
+var wait = 1300000;   //. ウェイト（マイクロ秒）
 var outputfilename = 'a.txt';
 
 //. Cloudant REST APIs
@@ -16,145 +16,111 @@ var cloudantlib = require( 'cloudant' ),
     crypto = require( 'crypto' ),
     fs = require( 'fs' ),
     request = require( 'request' ),
+    sleep = require( 'sleep' ),
     urlencode = require( 'urlencode' ),
     xml2js = require( 'xml2js' );
 var settings = require( './settings' );
 var cloudant = cloudantlib( { account: settings.cloudant_username, password: settings.cloudant_password } );
 
 
-fs.writeFile( outputfilename, "", 'utf8', (err) => {});
 function getCodesFromAmazonAPI( node ){
   for( var i = 0; i < 100000; i += 1000 ){
+    sleep.usleep( wait );
     getCodesAmazonNodeMinMax( $node, i, i + 999 );
   }
 }
 
+/*
 function getCodesFromAmazonNodeMinMax( node, min, max ){
-  return new Promise( function( resolve, reject ){
-    //. Page 1
-    setTimeout( function(){
-      var totalpages = getItemSearchAmazonAPI( node, min, max );
-      if( totalpages < 11 || max - min == 9 ){
-        if( totalpages > 1 ){
-          //. Page 2+
-          var m = ( totalpages > 10 ) ? 10 : totalpages;
-          for( var p = 2; p < m; p ++ ){
-            setTimeout( function(){
-              getItemSearchAmazonAPI( node, min, max, p );
-            }, wait );
-          }
-        }
-      }else{
-        //. Page 1+
-        if( max - min == 999 ){
-          for( var i = min; i < max; i += 100 ){
-            getCodesAmazonNodeMinMax( node, i, i + 99 );
-          }
-        }else if( max - min == 99 ){
-          for( var i = min; i < max; i += 10 ){
-            getCodesAmazonNodeMinMax( node, i, i + 9 );
-          }
-        }else{
-          for( var i = min; i <= max; i ++ ){
-            getCodesAmazonNodeMinMax( node, i, i );
-          }
+  //. Page 1
+  //var totalpages = getItemSearchAmazonAPI( node, min, max );
+  getItemSearchAmazonAPI( node, min, max ).then( function( totalpages ){
+    if( totalpages < 11 || max - min == 9 ){
+      if( totalpages > 1 ){
+        //. Page 2+
+        var m = ( totalpages > 10 ) ? 10 : totalpages;
+        for( var p = 2; p < m; p ++ ){
+          sleep.usleep( wait );
+          getItemSearchAmazonAPI( node, min, max, p );
         }
       }
-    }, wait );
+    }else{
+      //. Page 1+
+      if( max - min == 999 ){
+        for( var i = min; i < max; i += 100 ){
+          sleep.usleep( wait );
+          getCodesAmazonNodeMinMax( node, i, i + 99 );
+        }
+      }else if( max - min == 99 ){
+        for( var i = min; i < max; i += 10 ){
+          sleep.usleep( wait );
+          getCodesAmazonNodeMinMax( node, i, i + 9 );
+        }
+      }else{
+        for( var i = min; i <= max; i ++ ){
+          sleep.usleep( wait );
+          getCodesAmazonNodeMinMax( node, i, i );
+        }
+      }
+    }
   });
 }
-
-
-//. DB追加
-cloudant.db.get( settings.cloudant_db, function( err, body ){
-  if( err ){
-    if( err.statusCode == 404 ){
-      cloudant.db.create( settings.cloudant_db, function( err, body ){
-        if( err ){
-          db = null;
-        }else{
-          db = cloudant.db.use( settings.cloudant_db );
-        }
-      });
-    }else{
-      db = null;
-    }
-  }else{
-    db = cloudant.db.use( settings.cloudant_db );
-  }
-});
-
-
-if( settings.nodes ){
-  for( var i = 0; i < settings.nodes.length; i ++ ){
-    var node = settings.nodes[i];
-    getCodesFromAmazonAPI( node );
-  }
-}
+*/
 
 
 function getCodesFromAmazonAPI( node ){
-  return new Promise( function( resolve, reject ){
-    for( var i = 0; i < 100000; i += 1000 ){ //. １カテゴリで上限10万円まで調べる
-      getCodesAmazonNodeMinMax( node, i, i + 999 );
-    }
-  });
+  for( var i = 0; i < 100000; i += 1000 ){ //. １カテゴリで上限10万円まで調べる
+    sleep.usleep( wait );
+    getCodesAmazonNodeMinMax( node, i, i + 999 );
+  }
 }
 
 function getCodesAmazonNodeMinMax( node, min, max ){
-  return new Promise( function( resolve, reject ){
-    resolve( getItemSearchAmazonAPIms( node, min, max, wait ) );
-  });
-}
-
-function getItemSearchAmazonAPIms( node, min, max, ms ){
-  return new Promise( function( resolve, reject ){
-    //. Page 1
-    setTimeout( function(){
-      console.log( 'node = ' + node + ' : min = ' + min + ', max = ' + max + ', page = 1 ' );
-      var totalpages = getItemSearchAmazonAPI( node, min, max, 0 );
-      if( totalpages < 11 || max - min == 9 ){
-        if( totalpages > 1 ){
-          //. Page 2+
-          var m = ( totalpages > 10 ) ? 10 : totalpages;
-          for( var p = 2; p <= m; p ++ ){
-            setTimeout( function(){
-              console.log( 'node = ' + node + ' : min = ' + min + ', max = ' + max + ', page = ' + p + ' / ' + totalpages );
-              getItemSearchAmazonAPI( node, min, max, p );
-              if( p == m ){
-                resolve( totalpages );
-              }
-            }, ms );
+  //. Page 1
+  console.log( 'node = ' + node + ' : min = ' + min + ', max = ' + max + ', page = 1 ' );
+  //var totalpages = getItemSearchAmazonAPI( node, min, max, 0 );
+  getItemSearchAmazonAPI( node, min, max, 0 ).then( function( totalpages ){
+    console.log( ' totalpages = ' + totalpages );
+    if( totalpages < 11 || max - min == 9 ){
+      if( totalpages > 1 ){
+        //. Page 2+
+        var m = ( totalpages > 10 ) ? 10 : totalpages;
+        for( var p = 2; p <= m; p ++ ){
+          sleep.usleep( wait );
+          console.log( 'node = ' + node + ' : min = ' + min + ', max = ' + max + ', page = ' + p + ' / ' + totalpages );
+          getItemSearchAmazonAPI( node, min, max, p );
+          if( p == m ){
+            return ;
           }
-        }else{
-          resolve( totalpages );
         }
       }else{
-        //. Page 1+
-        if( max - min == 999 ){
-          for( var i = min; i < max; i += 100 ){
-            resolve( getCodesAmazonNodeMinMax( node, i, i + 99 ) );
-          }
-        }else if( max - min == 99 ){
-          for( var i = min; i < max; i += 10 ){
-            resolve( getCodesAmazonNodeMinMax( node, i, i + 9 ) );
-          }
-        }else{
-          for( var i = min; i < max; i ++ ){
-            resolve( getCodesAmazonNodeMinMax( node, i, i ) );
-          }
-        }
-
-        resolve( totalpages );
+        return ;
       }
-    }, ms );
+    }else{
+      //. Page 1+
+      if( max - min == 999 ){
+        for( var i = min; i < max; i += 100 ){
+          sleep.usleep( wait );
+          getCodesAmazonNodeMinMax( node, i, i + 99 );
+        }
+      }else if( max - min == 99 ){
+        for( var i = min; i < max; i += 10 ){
+          sleep.usleep( wait );
+          getCodesAmazonNodeMinMax( node, i, i + 9 );
+        }
+      }else{
+        for( var i = min; i < max; i ++ ){
+          sleep.usleep( wait );
+          getCodesAmazonNodeMinMax( node, i, i );
+        }
+      }
+    }
   });
 }
 
 //. https://github.com/dotnsf/phpAmazonShop/blob/master/crawler/common.php
 function getItemSearchAmazonAPI( node, min, max, page ){
   return new Promise( function( resolve, reject ){
-    var totalpages = 0;
     var request_url = 'http://ecs.amazonaws.jp/onca/xml?';
     var local_dt = new Date();
     var dt = local_dt.toISOString();
@@ -176,27 +142,35 @@ function getItemSearchAmazonAPI( node, min, max, page ){
     var hashed_str = hash.digest( 'base64' );
     
     request_url += ( params + '&Signature=' + urlencode( hashed_str ) );
+console.log( 'request_url = ' + request_url );
 
     var options = {
       url: request_url,
       headers: {
-        'User-Agent': 'XXX (Linux)',
+        'User-Agent': 'XXXX (Linux)',
         'Host': 'ecs.amazonaws.jp'
       },
       method: 'GET'
     };
 
+console.log( '  1' );
     request( options, ( err, res, body ) => {
+console.log( '  2' );
       if( err ){
-        resolve( err );
+console.log( ' err = ' + err );
+        resolve( 0 );
       }else{
+console.log( '  3' );
+console.log( ' body = ' + body );
         //resolve( body );
         xml2js.parseString( body, ( err0, xml ) => {
           if( err0 ){
-            resolve( err0 );
+console.log( ' err0 = ' + err0 );
+            resolve( 0 );
           }else{
             if( xml && xml.ItemSearchResponse && xml.ItemSearchResponse.Items ){
               var Items = xml.ItemSearchResponse.Items[0];
+console.log( Items );
               var totalpages = Items.TotalPages[0];
               if( Items.Item && Items.Item.length ){
                 for( var idx = 0; idx < Items.Item.length; idx ++ ){
@@ -208,7 +182,7 @@ function getItemSearchAmazonAPI( node, min, max, page ){
                   var listprice = '';
                   var ean = '';
                   var asin = '';
-
+  
                   try{
                     image_url = Item.MediumImage[0].URL[0];
                   }catch(e){
@@ -250,21 +224,61 @@ function getItemSearchAmazonAPI( node, min, max, page ){
                     if( brand ){ item['brand'] = brand; }
                     if( manufacturer ){ item['maker'] = manufacturer; }
                     if( image_url ){ item['image_url'] = image_url; }
- 
+
                     var line = JSON.stringify( item, 2, null );
                     console.log( line );
-
+  
                     fs.appendFile( outputfilename, line + "\n", 'utf8', (err) => {});
                   }
                 }
               }
+
+              resolve( totalpages );
+            }else{
+              resolve( 0 );
             }
           }
-        });
+        });  //. xml2json
       }
-    });
-  });
+    });  //. request
+    console.log( '  z' );
+  });  //. Promise
 }
+
+
+
+
+//. DB追加
+cloudant.db.get( settings.cloudant_db, function( err, body ){
+  if( err ){
+    if( err.statusCode == 404 ){
+      cloudant.db.create( settings.cloudant_db, function( err, body ){
+        if( err ){
+          db = null;
+        }else{
+          db = cloudant.db.use( settings.cloudant_db );
+        }
+      });
+    }else{
+      db = null;
+    }
+  }else{
+    db = cloudant.db.use( settings.cloudant_db );
+  }
+});
+
+
+//. メイン
+if( settings.nodes ){
+  fs.writeFileSync( outputfilename, "" );
+  for( var i = 0; i < settings.nodes.length; i ++ ){
+    sleep.usleep( wait );
+    var node = settings.nodes[i];
+    getCodesFromAmazonAPI( node );
+  }
+}
+
+
 
 
 
