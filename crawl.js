@@ -1,7 +1,7 @@
 //. crawl.js
 
 var wait = 1300000;   //. ウェイト（マイクロ秒）
-var outputfilename = 'a.txt';
+var outputfilename = 'items.json.txt';
 
 //. Cloudant REST APIs
 //. https://console.bluemix.net/docs/services/Cloudant/api/database.html#databases
@@ -15,10 +15,10 @@ var outputfilename = 'a.txt';
 var cloudantlib = require( 'cloudant' ),
     crypto = require( 'crypto' ),
     fs = require( 'fs' ),
-    request = require( 'request' ),
+    request = require( 'sync-request' ),
     sleep = require( 'sleep' ),
     urlencode = require( 'urlencode' ),
-    xml2js = require( 'xml2js' );
+    xml2js = require( 'xml2js-parser' );
 var settings = require( './settings' );
 var cloudant = cloudantlib( { account: settings.cloudant_username, password: settings.cloudant_password } );
 
@@ -142,7 +142,6 @@ function getItemSearchAmazonAPI( node, min, max, page ){
     var hashed_str = hash.digest( 'base64' );
     
     request_url += ( params + '&Signature=' + urlencode( hashed_str ) );
-console.log( 'request_url = ' + request_url );
 
     var options = {
       url: request_url,
@@ -153,96 +152,101 @@ console.log( 'request_url = ' + request_url );
       method: 'GET'
     };
 
-console.log( '  1' );
-    request( options, ( err, res, body ) => {
-console.log( '  2' );
-      if( err ){
-console.log( ' err = ' + err );
-        resolve( 0 );
-      }else{
-console.log( '  3' );
-console.log( ' body = ' + body );
-        //resolve( body );
-        xml2js.parseString( body, ( err0, xml ) => {
-          if( err0 ){
-console.log( ' err0 = ' + err0 );
-            resolve( 0 );
-          }else{
-            if( xml && xml.ItemSearchResponse && xml.ItemSearchResponse.Items ){
-              var Items = xml.ItemSearchResponse.Items[0];
-console.log( Items );
-              var totalpages = Items.TotalPages[0];
-              if( Items.Item && Items.Item.length ){
-                for( var idx = 0; idx < Items.Item.length; idx ++ ){
-                  var Item = Items.Item[idx];
-                  var image_url = '';
-                  var manufacturer = '';
-                  var brand = '';
-                  var title = '';
-                  var listprice = '';
-                  var ean = '';
-                  var asin = '';
-  
-                  try{
-                    image_url = Item.MediumImage[0].URL[0];
-                  }catch(e){
-                  }
-                  try{
-                    manufacturer = Item.ItemAttributes[0].Manufacturer[0];
-                  }catch(e){
-                  }
-                  try{
-                    brand = Item.ItemAttributes[0].Brand[0];
-                  }catch(e){
-                  }
-                  try{
-                    title = Item.ItemAttributes[0].Title[0];
-                  }catch(e){
-                  }
-                  try{
-                    listprice = Item.ItemAttributes[0].ListPrice[0].Amount[0];
-                  }catch(e){
-                  }
-                  try{
-                    ean = Item.ItemAttributes[0].EAN[0];
-                  }catch(e){
-                  }
-                  try{
-                    asin = Item.ASIN[0];
-                  }catch(e){
-                  }
+    var response = request( 'GET', request_url );
+    var body = response.getBody();
+
+    try{
+      var xml = xml2js.parseStringSync( body );
+
+      if( xml && xml.ItemSearchResponse && xml.ItemSearchResponse.Items ){
+        var Items = xml.ItemSearchResponse.Items[0];
+        var totalpages = Items.TotalPages[0];
+        if( Items.Item && Items.Item.length ){
+          for( var idx = 0; idx < Items.Item.length; idx ++ ){
+            var Item = Items.Item[idx];
+            var image_url = '';
+            var manufacturer = '';
+            var brand = '';
+            var title = '';
+            var listprice = '';
+            var ean = '';
+            var asin = '';
+
+            try{
+              image_url = Item.MediumImage[0].URL[0];
+            }catch(e){
+            }
+            try{
+              manufacturer = Item.ItemAttributes[0].Manufacturer[0];
+            }catch(e){
+            }
+            try{
+              brand = Item.ItemAttributes[0].Brand[0];
+            }catch(e){
+            }
+            try{
+              title = Item.ItemAttributes[0].Title[0];
+            }catch(e){
+            }
+            try{
+              listprice = Item.ItemAttributes[0].ListPrice[0].Amount[0];
+            }catch(e){
+            }
+            try{
+              ean = Item.ItemAttributes[0].EAN[0];
+            }catch(e){
+            }
+            try{
+              asin = Item.ASIN[0];
+            }catch(e){
+            }
  
-                  if( listprice == '' ){
-                    listprice = 0;
-                  }
+            if( listprice == '' ){
+              listprice = 0;
+            }
 
-                  if( asin ){
-                    var item = { asin: asin };
-                    if( ean ){ item['code'] = ean; }
-                    if( title ){ item['name'] = title; }
-                    if( listprice ){ item['price'] = listprice; }
-                    if( brand ){ item['brand'] = brand; }
-                    if( manufacturer ){ item['maker'] = manufacturer; }
-                    if( image_url ){ item['image_url'] = image_url; }
+            if( asin ){
+              var item = { asin: asin };
+              if( ean ){ item['code'] = ean; }
+              if( title ){ item['name'] = title; }
+              if( listprice ){ item['price'] = listprice; }
+              if( brand ){ item['brand'] = brand; }
+              if( manufacturer ){ item['maker'] = manufacturer; }
+              if( image_url ){ item['image_url'] = image_url; }
 
-                    var line = JSON.stringify( item, 2, null );
-                    console.log( line );
-  
-                    fs.appendFile( outputfilename, line + "\n", 'utf8', (err) => {});
-                  }
-                }
-              }
+              var line = JSON.stringify( item, 2, null );
+              console.log( line );
 
-              resolve( totalpages );
-            }else{
-              resolve( 0 );
+              fs.appendFileSync( outputfilename, line + "\n" );
+/*
+              fs.appendFile( outputfilename, line + "\n", 'utf8', (err) => {
+                if( err ){ console.log( err ); }
+              });
+*/
             }
           }
-        });  //. xml2json
+
+          resolve( totalpages );
+        }else{
+          resolve( 0 );
+        }
+      }else{
+          resolve( 0 );
       }
-    });  //. request
-    console.log( '  z' );
+    }catch( err ){
+      console.log( err );
+      resolve( 0 );
+    }
   });  //. Promise
+}
+
+function isExistFile( file ){
+  try{
+    fs.statSync( file );
+    return true;
+  }catch( err ){
+    return false;
+  }
 }
 
 
@@ -270,7 +274,10 @@ cloudant.db.get( settings.cloudant_db, function( err, body ){
 
 //. メイン
 if( settings.nodes ){
-  fs.writeFileSync( outputfilename, "" );
+  if( isExistFile( outputfilename ) ){
+    fs.writeFileSync( outputfilename, "" );
+  }
+
   for( var i = 0; i < settings.nodes.length; i ++ ){
     sleep.usleep( wait );
     var node = settings.nodes[i];
