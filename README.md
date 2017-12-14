@@ -31,10 +31,11 @@ Sample Web Shop with Amazon Affiliate
 
 - (Option)If you have Amazon Associate account tag and/or Amazon Web Service key/secret, edit settings.js with them.
 
+- `$ npm install`
 
 ## Load sample
 
-- You can use sample items record:
+- Load sample items record:
 
 `$ node bulkload`
 
@@ -43,7 +44,7 @@ Sample Web Shop with Amazon Affiliate
 
 - Deploy application into IBM Cloud,
 
-`$ cf login -a https://api.ng.bluemix.net/`
+`$ cf login -a https://api.ng.bluemix.net/` (in case you use USA region)
 `$ cf push appname`
 
 - or You can run application in your environment:
