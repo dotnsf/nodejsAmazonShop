@@ -27,6 +27,7 @@ cloudant.db.get( settings.cloudant_db, function( err, body ){
           db = null;
         }else{
           db = cloudant.db.use( settings.cloudant_db );
+          load();
         }
       });
     }else{
@@ -34,35 +35,39 @@ cloudant.db.get( settings.cloudant_db, function( err, body ){
     }
   }else{
     db = cloudant.db.use( settings.cloudant_db );
+    load();
   }
 });
 
-setTimeout( function(){
-  var lines = [];
-  var stream = fs.createReadStream( './items.json.txt', 'utf8' );
-  var reader = readline.createInterface( {input: stream} );
-  reader.on( 'line', (line) => {
-    lines.push( JSON.parse( line ) );
-  });
-  reader.on( 'close', () => {
-    if( db ){
-      var n = lines.length;
-      for( var i = 0; i < n; i += 1000 ){
-        var docs = [];
-        if( i + 1000 > n ){
-          docs = lines.slice( i );
-        }else{
-          docs = lines.slice( i, i + 1000 );
-        }
 
-        db.bulk( { docs: docs }, function( err, body ){ console.log( body );} );
+function load(){
+  setTimeout( function(){
+    var lines = [];
+    var stream = fs.createReadStream( './items.json.txt', 'utf8' );
+    var reader = readline.createInterface( {input: stream} );
+    reader.on( 'line', (line) => {
+      lines.push( JSON.parse( line ) );
+    });
+    reader.on( 'close', () => {
+      if( db ){
+        var n = lines.length;
+        for( var i = 0; i < n; i += 1000 ){
+          var docs = [];
+          if( i + 1000 > n ){
+            docs = lines.slice( i );
+          }else{
+            docs = lines.slice( i, i + 1000 );
+          }
+
+          db.bulk( { docs: docs }, function( err, body ){ console.log( body );} );
+        }
+      }else{
+        //. このメッセージが出るようであれば、settings.js 内の cloudant_db_wait 値を増やす（ミリ秒指定）
+        console.log( 'db is not initialized yet' );
       }
-    }else{
-      //. このメッセージが出るようであれば、settings.js 内の cloudant_db_wait 値を増やす（ミリ秒指定）
-      console.log( 'db is not initialized yet' );
-    }
-  });
-}, settings.cloudant_db_wait );
+    });
+  }, settings.cloudant_db_wait );
+}
 
 
 

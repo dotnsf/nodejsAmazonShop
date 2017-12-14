@@ -40,7 +40,7 @@ Sample Web Shop with Amazon Affiliate
 `$ node bulkload`
 
 
-## How to use
+## How to use web application
 
 - Deploy application into IBM Cloud,
 
@@ -65,7 +65,7 @@ If you don't want to use sample data, you can follow these instructions:
 
 - Run following command:
 
-`$ node bulkload`
+`$ node crawl`
 
 - Load new sample file.
 
