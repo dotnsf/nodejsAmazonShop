@@ -45,6 +45,7 @@ Sample Web Shop with Amazon Affiliate
 - Deploy application into IBM Cloud,
 
 `$ cf login -a https://api.ng.bluemix.net/` (in case you use USA region)
+
 `$ cf push appname`
 
 - or You can run application in your environment:
@@ -68,6 +69,7 @@ If you don't want to use sample data, you can follow these instructions:
 
 - Load new sample file.
 
+`$ node bulkload`
 
 ## (Option)How to get Amazon Associate ID(tag)
 
