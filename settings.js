@@ -4,7 +4,7 @@
 exports.cloudant_username = 'cloudant_username';
 exports.cloudant_password = 'cloudant_password';
 exports.cloudant_db = 'items';
-exports.cloudant_db_wait = 2000;
+exports.cloudant_db_wait = 10000;
 
 //. settings for app
 exports.basic_username = '';
