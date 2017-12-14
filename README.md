@@ -59,6 +59,10 @@ Sample Web Shop with Amazon Affiliate
 
 ## Customize your items
 
+** Not implemented yet. **
+
+<!--
+
 If you don't want to use sample data, you can follow these instructions:
 
 - Edit setttings.js, and edit prefered nodes from here: https://affiliate.amazon.co.jp/gp/associates/help/t100
@@ -70,6 +74,8 @@ If you don't want to use sample data, you can follow these instructions:
 - Load new sample file.
 
 `$ node bulkload`
+
+-->
 
 ## (Option)How to get Amazon Associate ID(tag)
 
