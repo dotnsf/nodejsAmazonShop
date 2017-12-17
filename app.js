@@ -157,5 +157,34 @@ app.get( '/items', function( req, res ){
 });
 
 
+//. 検索
+//app.post( '/search', function( req, res ){
+app.get( '/search', function( req, res ){
+  if( db ){
+    //var q = req.body.q;
+    var q = req.query.q;
+    if( q ){
+      db.search( 'ftsearch', 'itemsIndex', { q: q }, function( err, result ){
+        if( err ){
+          res.status( 400 );
+          res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
+          res.end();
+        }else{
+          res.write( JSON.stringify( { status: true, items: result.rows }, 2, null ) );
+          res.end();
+        }
+      } );
+    }else{
+      res.status( 400 );
+      res.write( JSON.stringify( { status: false, message: 'parameter q needed for query string' }, 2, null ) );
+      res.end();
+    }
+  }else{
+    res.status( 400 );
+    res.write( JSON.stringify( { status: false, message: 'failed to initialize cloudant.' }, 2, null ) );
+    res.end();
+  }
+});
+
 app.listen( port );
 console.log( "server starting on " + port + " ..." );
