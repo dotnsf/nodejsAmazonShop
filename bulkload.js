@@ -80,13 +80,12 @@ function load(){
           indexes: {
             itemsIndex: {
               analyzer: "japanese",
-              index: "function(doc){ if('name' in doc){ var fields = [doc.name, doc.code, doc.brand, doc.maker]; index('default', fields.join(' ')); index('name', doc.name, {store:'yes'}); index('code', doc.code, {store:'yes'}); index('brand', doc.brand, {store:'yes'}); index('maker', doc.maker, {store:'yes'}); } }"
+              index: "function(doc){ if('name' in doc){ var fields = [doc.name, doc.code, doc.brand, doc.maker, doc.image_url, doc.asin]; index('default', fields.join(' ')); index('name', doc.name, {store:'yes'}); index('code', doc.code, {store:'yes'}); index('brand', doc.brand, {store:'yes'}); index('maker', doc.maker, {store:'yes'}); index('image_url', doc.image_url, {store:'yes'}); index('asin', doc.asin, {store:'yes'}); } }"
             }
           }
         };
 
-        db.insert( indexdoc, function( err, result ){ 
-        });
+        db.insert( indexdoc, function( err, result ){});
       }else{
         //. このメッセージが出るようであれば、settings.js 内の cloudant_db_wait 値を増やす（ミリ秒指定）
         console.log( 'db is not initialized yet' );

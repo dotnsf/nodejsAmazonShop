@@ -102,7 +102,7 @@ app.post( '/items', function( req, res ){
           res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
           res.end();
         }else{
-          res.write( JSON.stringify( { status: true, aws_tag: sws_tag, body: body }, 2, null ) );
+          res.write( JSON.stringify( { status: true, aws_tag: aws_tag, body: body }, 2, null ) );
           res.end();
         }
       });
@@ -170,7 +170,7 @@ app.get( '/search', function( req, res ){
           res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
           res.end();
         }else{
-          res.write( JSON.stringify( { status: true, items: result.rows }, 2, null ) );
+          res.write( JSON.stringify( { status: true, aws_tag: settings.aws_tag, cnt: result.rows.length, items: result.rows }, 2, null ) );
           res.end();
         }
       } );
