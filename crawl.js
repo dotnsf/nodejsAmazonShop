@@ -24,7 +24,7 @@ function getCodesFromAmazonAPI( node ){
   return new Promise( function( resolve, reject ){
     for( var i = 0; i < 100000; i += 1000 ){ //. １カテゴリで上限10万円まで調べる
       sleep.usleep( wait );
-      getCodesAmazonNodeMinMax( node, i, i + 999 );
+      getCodesAmazonNodeMinMax( node, i, i + 999 ).then( function( x ){} );
     }
     resolve( 0 );
   });
@@ -57,17 +57,17 @@ function getCodesAmazonNodeMinMax( node, min, max ){
         if( max - min == 999 ){
           for( var i = min; i < max; i += 100 ){
             sleep.usleep( wait );
-            getCodesAmazonNodeMinMax( node, i, i + 99 );
+            getCodesAmazonNodeMinMax( node, i, i + 99 ).then( function( x ){} );
           }
         }else if( max - min == 99 ){
           for( var i = min; i < max; i += 10 ){
             sleep.usleep( wait );
-            getCodesAmazonNodeMinMax( node, i, i + 9 );
+            getCodesAmazonNodeMinMax( node, i, i + 9 ).then( function( x ){} );
           }
         }else{
           for( var i = min; i < max; i ++ ){
             sleep.usleep( wait );
-            getCodesAmazonNodeMinMax( node, i, i );
+            getCodesAmazonNodeMinMax( node, i, i ).then( function( x ){} );
           }
         }
         resolve( 0 );
@@ -213,7 +213,7 @@ if( settings.nodes ){
   for( var i = 0; i < settings.nodes.length; i ++ ){
     sleep.usleep( wait );
     var node = settings.nodes[i];
-    getCodesFromAmazonAPI( node );
+    getCodesFromAmazonAPI( node ).then( function( x ){} );
   }
 }
 
