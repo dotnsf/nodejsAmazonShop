@@ -59,8 +59,34 @@ function load(){
             docs = lines.slice( i, i + 1000 );
           }
 
-          db.bulk( { docs: docs }, function( err, body ){ console.log( body );} );
+          db.bulk( { docs: docs }, function( err, body ){
+            console.log( body );
+          });
         }
+
+        //. 検索インデックスを追加
+        /* 検索: 
+          db.search( 'ftsearch', 'itemsIndex', { q: 'xxxx' }, function( err, result ){
+            if( err ){
+            }else{
+              for( var i = 0; i < result.rows.length; i ++ ){
+                console.log( result.rows[i].id );
+              }
+            }
+          } );
+         */
+        var indexdoc = {
+          _id: "_design/ftsearch",
+          indexes: {
+            itemsIndex: {
+              analyzer: "japanese",
+              index: "function(doc){ if('name' in doc){ var fields = [doc.name, doc.code, doc.brand, doc.maker]; index('default', fields.join(' ')); index('name', doc.name, {store:'yes'}); index('code', doc.code, {store:'yes'}); index('brand', doc.brand, {store:'yes'}); index('maker', doc.maker, {store:'yes'}); } }"
+            }
+          }
+        };
+
+        db.insert( indexdoc, function( err, result ){ 
+        });
       }else{
         //. このメッセージが出るようであれば、settings.js 内の cloudant_db_wait 値を増やす（ミリ秒指定）
         console.log( 'db is not initialized yet' );
