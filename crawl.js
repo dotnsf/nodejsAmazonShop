@@ -110,6 +110,7 @@ function getItemSearchAmazonAPI( node, min, max, page ){
       method: 'GET'
     };
 
+    //. 4900-4999 の時に503エラー
     var response = request( 'GET', request_url );
     var body = response.getBody();
 
