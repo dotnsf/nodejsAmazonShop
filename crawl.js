@@ -1,6 +1,6 @@
 //. crawl.js
 
-var wait = 1300000;   //. ウェイト（マイクロ秒）
+var wait = 2000000;   //. ウェイト（マイクロ秒）
 var outputfilename = 'items.json.txt';
 
 //. Cloudant REST APIs
@@ -8,9 +8,6 @@ var outputfilename = 'items.json.txt';
 
 //. npm cloudant
 //. https://www.npmjs.com/package/cloudant
-
-//. References
-//. http://www.atmarkit.co.jp/ait/articles/0910/26/news097.html
 
 var cloudantlib = require( 'cloudant' ),
     crypto = require( 'crypto' ),
@@ -24,97 +21,58 @@ var cloudant = cloudantlib( { account: settings.cloudant_username, password: set
 
 
 function getCodesFromAmazonAPI( node ){
-  for( var i = 0; i < 100000; i += 1000 ){
-    sleep.usleep( wait );
-    getCodesAmazonNodeMinMax( $node, i, i + 999 );
-  }
-}
-
-/*
-function getCodesFromAmazonNodeMinMax( node, min, max ){
-  //. Page 1
-  //var totalpages = getItemSearchAmazonAPI( node, min, max );
-  getItemSearchAmazonAPI( node, min, max ).then( function( totalpages ){
-    if( totalpages < 11 || max - min == 9 ){
-      if( totalpages > 1 ){
-        //. Page 2+
-        var m = ( totalpages > 10 ) ? 10 : totalpages;
-        for( var p = 2; p < m; p ++ ){
-          sleep.usleep( wait );
-          getItemSearchAmazonAPI( node, min, max, p );
-        }
-      }
-    }else{
-      //. Page 1+
-      if( max - min == 999 ){
-        for( var i = min; i < max; i += 100 ){
-          sleep.usleep( wait );
-          getCodesAmazonNodeMinMax( node, i, i + 99 );
-        }
-      }else if( max - min == 99 ){
-        for( var i = min; i < max; i += 10 ){
-          sleep.usleep( wait );
-          getCodesAmazonNodeMinMax( node, i, i + 9 );
-        }
-      }else{
-        for( var i = min; i <= max; i ++ ){
-          sleep.usleep( wait );
-          getCodesAmazonNodeMinMax( node, i, i );
-        }
-      }
+  return new Promise( function( resolve, reject ){
+    for( var i = 0; i < 100000; i += 1000 ){ //. １カテゴリで上限10万円まで調べる
+      sleep.usleep( wait );
+      getCodesAmazonNodeMinMax( node, i, i + 999 );
     }
+    resolve( 0 );
   });
-}
-*/
-
-
-function getCodesFromAmazonAPI( node ){
-  for( var i = 0; i < 100000; i += 1000 ){ //. １カテゴリで上限10万円まで調べる
-    sleep.usleep( wait );
-    getCodesAmazonNodeMinMax( node, i, i + 999 );
-  }
 }
 
 function getCodesAmazonNodeMinMax( node, min, max ){
-  //. Page 1
-  console.log( 'node = ' + node + ' : min = ' + min + ', max = ' + max + ', page = 1 ' );
-  //var totalpages = getItemSearchAmazonAPI( node, min, max, 0 );
-  getItemSearchAmazonAPI( node, min, max, 0 ).then( function( totalpages ){
-    console.log( ' totalpages = ' + totalpages );
-    if( totalpages < 11 || max - min == 9 ){
-      if( totalpages > 1 ){
-        //. Page 2+
-        var m = ( totalpages > 10 ) ? 10 : totalpages;
-        for( var p = 2; p <= m; p ++ ){
-          sleep.usleep( wait );
-          console.log( 'node = ' + node + ' : min = ' + min + ', max = ' + max + ', page = ' + p + ' / ' + totalpages );
-          getItemSearchAmazonAPI( node, min, max, p );
-          if( p == m ){
-            return ;
+  return new Promise( function( resolve, reject ){
+    //. Page 1
+    console.log( 'node = ' + node + ' : min = ' + min + ', max = ' + max + ', page = 1 ' );
+    getItemSearchAmazonAPI( node, min, max, 0 ).then( function( totalpages ){
+      console.log( ' totalpages = ' + totalpages );
+      if( totalpages < 11 || max - min == 9 ){
+        if( totalpages > 1 ){
+          //. Page 2+
+          var m = ( totalpages > 10 ) ? 10 : totalpages;
+          for( var p = 2; p <= m; p ++ ){
+            sleep.usleep( wait );
+            console.log( 'node = ' + node + ' : min = ' + min + ', max = ' + max + ', page = ' + p + ' / ' + totalpages );
+            getItemSearchAmazonAPI( node, min, max, p ).then( function( tp ){
+              if( p == m ){
+                resolve( totalpages );
+              }
+            });
+          }
+        }else{
+          resolve( totalpages );
+        }
+      }else{
+        //. Page 1+
+        if( max - min == 999 ){
+          for( var i = min; i < max; i += 100 ){
+            sleep.usleep( wait );
+            getCodesAmazonNodeMinMax( node, i, i + 99 );
+          }
+        }else if( max - min == 99 ){
+          for( var i = min; i < max; i += 10 ){
+            sleep.usleep( wait );
+            getCodesAmazonNodeMinMax( node, i, i + 9 );
+          }
+        }else{
+          for( var i = min; i < max; i ++ ){
+            sleep.usleep( wait );
+            getCodesAmazonNodeMinMax( node, i, i );
           }
         }
-      }else{
-        return ;
+        resolve( 0 );
       }
-    }else{
-      //. Page 1+
-      if( max - min == 999 ){
-        for( var i = min; i < max; i += 100 ){
-          sleep.usleep( wait );
-          getCodesAmazonNodeMinMax( node, i, i + 99 );
-        }
-      }else if( max - min == 99 ){
-        for( var i = min; i < max; i += 10 ){
-          sleep.usleep( wait );
-          getCodesAmazonNodeMinMax( node, i, i + 9 );
-        }
-      }else{
-        for( var i = min; i < max; i ++ ){
-          sleep.usleep( wait );
-          getCodesAmazonNodeMinMax( node, i, i );
-        }
-      }
-    }
+    });
   });
 }
 
@@ -218,11 +176,6 @@ function getItemSearchAmazonAPI( node, min, max, page ){
               console.log( line );
 
               fs.appendFileSync( outputfilename, line + "\n" );
-/*
-              fs.appendFile( outputfilename, line + "\n", 'utf8', (err) => {
-                if( err ){ console.log( err ); }
-              });
-*/
             }
           }
 
@@ -250,28 +203,6 @@ function isExistFile( file ){
 }
 
 
-
-
-//. DB追加
-cloudant.db.get( settings.cloudant_db, function( err, body ){
-  if( err ){
-    if( err.statusCode == 404 ){
-      cloudant.db.create( settings.cloudant_db, function( err, body ){
-        if( err ){
-          db = null;
-        }else{
-          db = cloudant.db.use( settings.cloudant_db );
-        }
-      });
-    }else{
-      db = null;
-    }
-  }else{
-    db = cloudant.db.use( settings.cloudant_db );
-  }
-});
-
-
 //. メイン
 if( settings.nodes ){
   if( isExistFile( outputfilename ) ){
@@ -284,7 +215,6 @@ if( settings.nodes ){
     getCodesFromAmazonAPI( node );
   }
 }
-
 
 
 
