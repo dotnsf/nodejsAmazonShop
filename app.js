@@ -161,24 +161,42 @@ app.get( '/items', function( req, res ){
 //app.post( '/search', function( req, res ){
 app.get( '/search', function( req, res ){
   if( db ){
+    var cnt = 200; //body0.rows.length; //. db.search の上限値
+
     //var q = req.body.q;
     var q = req.query.q;
     if( q ){
       var limit = req.query.limit ? req.query.limit : 30;
       var skip = req.query.skip ? req.query.skip : 0;
-      db.search( 'ftsearch', 'itemsIndex', { q: q, include_docs: true, limit: limit, skip: skip }, function( err, result ){
+      //db.search( 'ftsearch', 'itemsIndex', { q: q, limit: limit, skip: skip }, function( err, result ){
+      db.search( 'ftsearch', 'itemsIndex', { q: q, limit: cnt }, function( err, result ){
         if( err ){
           res.status( 400 );
           res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
           res.end();
         }else{
-          res.write( JSON.stringify( { status: true, aws_tag: settings.aws_tag, cnt: result.rows.length, items: result.rows }, 2, null ) );
+          var items = result.rows;
+          cnt = items.length;
+          if( skip ){
+            if( skip < items.length ){
+              items = items.slice( skip ); 
+            }else{
+              items = [];
+            }
+          }
+          if( limit ){
+            if( limit < items.length ){
+              items = items.slice( 0, limit ); 
+            }
+          }
+
+          res.write( JSON.stringify( { status: true, aws_tag: settings.aws_tag, cnt: cnt, items: items }, 2, null ) );
           res.end();
         }
-      } );
+      });
     }else{
       res.status( 400 );
-      res.write( JSON.stringify( { status: false, message: 'parameter q needed for query string' }, 2, null ) );
+      res.write( JSON.stringify( { status: false, message: 'parameter q needed.' }, 2, null ) );
       res.end();
     }
   }else{
