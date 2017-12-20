@@ -33,13 +33,17 @@ Sample Web Shop with Amazon Affiliate
 
 ## Simplest web application install
 
+- Login to IBM Cloud at first: http://bluemix.net/
+
 - Folk this repository into yours.
 
 - Edit manifest.yml for name and host.
 
-- Click this button to deploy Node.js application server and Cloudant NoSQL DB to IBM Cloud:
+- Click this button to deploy Node.js application server to IBM Cloud:
 
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/dotnsf/nodejsAmazonShop)
+
+- Create IBM Cloudant NoSQL DB service, and bind it to application.
 
 ## Install
 
@@ -49,7 +53,7 @@ Sample Web Shop with Amazon Affiliate
 
 ## Load sample
 
-- Login to IBM Cloud, and create IBM Cloudant service instance.
+- Login to IBM Cloud, and create IBM Cloudant service instance, if you don't have one yet.
 
 - Check your connection credentials of IBM Cloudant. You need username and password later.
 
