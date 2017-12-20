@@ -1,4 +1,3 @@
-declared-services:
 applications:
 - path: .
   memory: 256M
