@@ -164,7 +164,9 @@ app.get( '/search', function( req, res ){
     //var q = req.body.q;
     var q = req.query.q;
     if( q ){
-      db.search( 'ftsearch', 'itemsIndex', { q: q }, function( err, result ){
+      var limit = req.query.limit ? req.query.limit : 30;
+      var skip = req.query.skip ? req.query.skip : 0;
+      db.search( 'ftsearch', 'itemsIndex', { q: q, include_docs: true, limit: limit, skip: skip }, function( err, result ){
         if( err ){
           res.status( 400 );
           res.write( JSON.stringify( { status: false, message: err }, 2, null ) );
