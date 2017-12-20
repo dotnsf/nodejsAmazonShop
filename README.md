@@ -23,11 +23,13 @@ Sample Web Shop with Amazon Affiliate
 
 - Amazon Associate acount
 
-- Amazon Web Serivice acount
+    - for affilicate enabled.
+
+- Amazon Web Service acount
+
+    - for custom items crawling.
 
 ## Install
-
-- Edit settings.js with your Cloudant username & password
 
 - (Option)If you have Amazon Associate account tag and/or Amazon Web Service key/secret, edit settings.js with them.
 
@@ -35,18 +37,26 @@ Sample Web Shop with Amazon Affiliate
 
 ## Load sample
 
-- Load sample items record:
+- Login to IBM Cloud, and create IBM Cloudant service instance.
 
-`$ node bulkload [items.json.text]`
+- Check your connection credentials of IBM Cloudant. You need username and password later.
+
+- Edit settings.js with your Cloudant username & password
+
+- Load sample items record again:
+
+`$ node bulkload [items.json.txt]`
 
     - You can specify input file name.
+
+    - If not, bulkload.js will use items.json.txt.
 
 
 ## How to use web application
 
 - Deploy application into IBM Cloud,
 
-`$ cf login -a https://api.ng.bluemix.net/` (in case you use USA region)
+`$ cf login -a https://api.ng.bluemix.net/` (in case you use USA-south region)
 
 `$ cf push appname`
 
@@ -63,14 +73,17 @@ Sample Web Shop with Amazon Affiliate
 
 If you don't want to use sample data, you can follow these instructions:
 
-
-- Open crawl.js, and edit lines:
+- Open crawl.js, and edit parameter lines:
 
     - nodes: 
 
         * crawler will search items with specified category(s).
 
-        * https://affiliate.amazon.co.jp/gp/associates/help/t100
+        * See https://affiliate.amazon.co.jp/gp/associates/help/t100 for details.
+
+    - min_price: 
+
+        * crawler will search items with minimum price with this value.
 
     - max_price: 
 
@@ -84,7 +97,7 @@ If you don't want to use sample data, you can follow these instructions:
 
         * crawler will repeat to search item information with this price step. If price_step == 1000, then crawler will find items with price 0-999(yen), next 1000-1999, 2000-2999, ..., and 99000-99999(if max_price == 100000).
 
-    - If you set larger price_step(ex. 5000), then crawler would finish faster. But it would miss some items in same price level.
+    - If you set larger price_step(ex. 5000), then crawler would finish faster. But it would miss more items in same price level.
 
 - Run following command:
 
@@ -92,9 +105,15 @@ If you don't want to use sample data, you can follow these instructions:
 
     - You can specify output file name.
 
+    - If not, crawl.js will use items.json.txt.
+
 - Load new sample file.
 
 `$ node bulkload [items.json.txt]`
+
+    - You can specify input file name.
+
+    - If not, bulkload.js will use items.json.txt.
 
 ## (Option)How to get Amazon Associate ID(tag)
 
