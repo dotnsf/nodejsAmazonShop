@@ -16,6 +16,12 @@ var cloudantlib = require( 'cloudant' ),
 var settings = require( './settings' );
 var cloudant = cloudantlib( { account: settings.cloudant_username, password: settings.cloudant_password } );
 
+var inputfilename = 'items.json.txt';
+if( process.argv.length > 2 ){
+  //. $ node bulkload.js XXXXX
+  inputfilename = process.argv[2];
+}
+
 
 //. DB追加
 var db = null;
@@ -43,7 +49,7 @@ cloudant.db.get( settings.cloudant_db, function( err, body ){
 function load(){
   setTimeout( function(){
     var lines = [];
-    var stream = fs.createReadStream( './items.json.txt', 'utf8' );
+    var stream = fs.createReadStream( inputfilename, 'utf8' );
     var reader = readline.createInterface( {input: stream} );
     reader.on( 'line', (line) => {
       lines.push( JSON.parse( line ) );
@@ -65,16 +71,6 @@ function load(){
         }
 
         //. 検索インデックスを追加
-        /* 検索: 
-          db.search( 'ftsearch', 'itemsIndex', { q: 'xxxx' }, function( err, result ){
-            if( err ){
-            }else{
-              for( var i = 0; i < result.rows.length; i ++ ){
-                console.log( result.rows[i].id );
-              }
-            }
-          } );
-         */
         var indexdoc = {
           _id: "_design/ftsearch",
           indexes: {

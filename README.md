@@ -37,7 +37,9 @@ Sample Web Shop with Amazon Affiliate
 
 - Load sample items record:
 
-`$ node bulkload`
+`$ node bulkload [items.json.text]`
+
+    - You can specify input file name.
 
 
 ## How to use web application
@@ -59,33 +61,40 @@ Sample Web Shop with Amazon Affiliate
 
 ## Customize your items
 
-** Not implemented yet. **
-
-<!--
-
 If you don't want to use sample data, you can follow these instructions:
 
-- Open setttings.js, and edit prefered nodes from here: https://affiliate.amazon.co.jp/gp/associates/help/t100
 
-- Open crawl.js, and edit top lines:
+- Open crawl.js, and edit lines:
 
-    - max_price: crawler will search items with maximum price with this value.
+    - nodes: 
 
-    - max_page: crawler will repeat same search API this same condition with this value. If max_page == 5, then crawler will find maximum 50(=5x10) items in same category and price range.
+        * crawler will search items with specified category(s).
 
-    - price_step: crawler will repeat to search item information with this price step. If price_step == 1000, then crawler will find items with price 0-999(yen), next 1000-1999, 2000-2999, ..., and 99000-99999(if max_price == 100000).
+        * https://affiliate.amazon.co.jp/gp/associates/help/t100
+
+    - max_price: 
+
+        * crawler will search items with maximum price with this value.
+
+    - max_page: 
+
+        * crawler will repeat same search API this same condition with this value. If max_page == 5, then crawler will find maximum 50(=5x10) items in same category and price range.
+
+    - price_step: 
+
+        * crawler will repeat to search item information with this price step. If price_step == 1000, then crawler will find items with price 0-999(yen), next 1000-1999, 2000-2999, ..., and 99000-99999(if max_price == 100000).
 
     - If you set larger price_step(ex. 5000), then crawler would finish faster. But it would miss some items in same price level.
 
 - Run following command:
 
-`$ node crawl`
+`$ node crawl [items.json.txt]`
+
+    - You can specify output file name.
 
 - Load new sample file.
 
-`$ node bulkload`
-
--->
+`$ node bulkload [items.json.txt]`
 
 ## (Option)How to get Amazon Associate ID(tag)
 

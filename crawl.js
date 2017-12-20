@@ -1,16 +1,21 @@
 //. crawl.js
 
+const nodes = [
+  //. https://affiliate.amazon.co.jp/gp/associates/help/t100
+//  '52905051', //. ビューティー/スキンケア
+//  '52908051', //. ビューティー/ヘアケア
+//  '52907051', //. ビューティー/ボディケア
+  '52912051'  //. ビューティー/男性化粧品
+];
+
 const wait = 3000000;      //. ウェイト（マイクロ秒）
 const min_price = 0;       //. 下限この額までの商品を検索する
 const max_price = 100000;  //. 上限この額までの商品を検索する
 const max_page = 5;        //. 上限このページまでの商品を検索する
 const price_step = 1000;   //. この額刻みで商品を検索する
-const outputfilename = 'items.json.txt';
+var outputfilename = 'items.json.txt';
 
-/* 最後にこのエラー
-<?xml version="1.0"?>
-<ItemSearchErrorResponse xmlns="http://ecs.amazonaws.com/doc/2009-01-06/"><Error><Code>RequestThrottled</Code><Message>AWS Access Key ID: AKIAJM3XACYDDRGTGZXQ. You are submitting requests too quickly. Please retry your requests at a slower rate.</Message></Error><RequestID>d092794d-6ac4-4435-b4a9-06486162eef2</RequestID></ItemSearchErrorResponse>
- */
+
 
 //. Cloudant REST APIs
 //. https://console.bluemix.net/docs/services/Cloudant/api/database.html#databases
@@ -186,6 +191,10 @@ function getItemSearchAmazonAPI( node, min, max, page ){
           resolve( 0 );
       }
     }catch( err ){
+/* エラー
+<?xml version="1.0"?>
+<ItemSearchErrorResponse xmlns="http://ecs.amazonaws.com/doc/2009-01-06/"><Error><Code>RequestThrottled</Code><Message>AWS Access Key ID: AKIAJM3XACYDDRGTGZXQ. You are submitting requests too quickly. Please retry your requests at a slower rate.</Message></Error><RequestID>d092794d-6ac4-4435-b4a9-06486162eef2</RequestID></ItemSearchErrorResponse>
+ */
       //console.log( err ); //. エラーはここ？
       resolve( -1 );
     }
@@ -202,8 +211,8 @@ function isExistFile( file ){
 }
 
 function nodeWalkThrough( idx ){
-  if( settings.nodes.length > idx ){
-    var node = settings.nodes[idx];
+  if( nodes.length > idx ){
+    var node = nodes[idx];
     getCodesFromAmazonAPI( node ).then( function( x ){
       nodeWalkThrough( idx + 1 );
     });
@@ -211,12 +220,17 @@ function nodeWalkThrough( idx ){
 }
 
 //. メイン
-if( settings.nodes ){
+if( process.argv.length > 2 ){
+  //. $ node crawl.js XXXXX
+  outputfilename = process.argv[2];
+}
+
+if( nodes ){
   if( isExistFile( outputfilename ) ){
     fs.writeFileSync( outputfilename, "" );
   }
 
-  if( settings.nodes.length > 0 ){
+  if( nodes.length > 0 ){
     nodeWalkThrough( 0 );
   }
 }
