@@ -64,6 +64,11 @@ Sample Web Shop with Amazon Affiliate
 
 `$ node app`
 
+- or Click this button to deploy to IBM Cloud:
+
+[![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/dotnsf/nodejsAmazonShop)
+
+
 - Browse your application.
 
 - Enjoy!
