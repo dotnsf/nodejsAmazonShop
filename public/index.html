@@ -18,7 +18,7 @@ $(function(){
   $('form').submit( function(){
     var q = $('#q').val();
     if( q ){
-      search( q, limit, skip );
+      searchItems( q, limit, skip );
     }else{
       getItems( limit, 0 );
     }
@@ -87,7 +87,7 @@ function getItems( limit, skip ){
   });
 }
 
-function search( q, limit, skip ){
+function searchItems( q, limit, skip ){
   $('#itemslistbody').html( '' );
   var obj = getBusyOverlay( 'viewport', {color:'black', opacity:0.5, text:'取得中', style:'text-decoration:blink; font-weight:bold; font-size:12px; color:white;' } );
   $.ajax({
@@ -95,8 +95,8 @@ function search( q, limit, skip ){
     type: 'GET',
     success: function( result ){
       obj.remove();
-      //console.log( result );
       result = JSON.parse( result );
+      //console.log( result );
       if( result.status && result.items ){
         var items = result.items;
         var aws_tag = result.aws_tag;
@@ -119,16 +119,16 @@ function search( q, limit, skip ){
         var tr = '<tr><td align="left">';
         if( skip > 0 ){
           var newskip = ( skip < limit ? 0 : skip - limit );
-          tr += '<a href="#" onClick="javascript:search( \'' + q + '\', ' + limit + ', ' + newskip + ' );">&lt;&lt;</a>';
+          tr += '<a href="#" onClick="searchItems( \'' + q + '\', ' + limit + ', ' + newskip + ' );">&lt;&lt;</a>';
         }else{
           tr += '&nbsp;';
         }
         tr += '</td><td colspan="2" align="middle">' + ( skip + 1 ) + ' - ' + ( skip + items.length ) + ' / ' + cnt + '</td>';
 
         tr += '<td align="right">';
-        //if( skip + limit < cnt ){
-        if( items.length == limit ){
-          tr += '<a href="#" onClick="javascript:search( \'' + q + '\', ' + limit + ', ' + ( skip + limit ) + ' );">&gt;&gt;</a>';
+        if( skip + limit < cnt ){
+        //if( items.length == limit ){
+          tr += '<a href="#" onClick="searchItems( \'' + q + '\', ' + limit + ', ' + ( skip + limit ) + ' );">&gt;&gt;</a>';
         }else{
           tr += '&nbsp;';
         }
@@ -142,9 +142,9 @@ function search( q, limit, skip ){
         });
       }
     },
-    error: function(){
+    error: function( e ){
       obj.remove();
-      console.log( "error" );
+      console.log( e );
     }
   });
 }
