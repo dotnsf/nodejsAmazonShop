@@ -166,6 +166,23 @@ If you don't want to use sample data, you can follow these instructions:
 
     - If not, bulkload.js will use items.json.txt.
 
+## (Option)How to create input file manually
+
+You can create input file for bulkload.js manually.
+
+bulkload.js would expect following text file:
+
+`{"code":"JAN/EAN/UTC code 1", "name":"Item name 1", "price": 100, "maker": "Maker of item 1", "brand": "Brand of item 1", "image_url": "URL of item 1 image", "asin": "ASIN code of item 1"}
+
+{"code":"JAN/EAN/UTC code 2", "name":"Item name 2", "price": 200, "maker": "Maker of item 2", "brand": "Brand of item 2", "image_url": "URL of item 2 image", "asin": "ASIN code of item 2"}
+
+  :
+
+  :`
+
+You would find it, but they are NOT JSON file. Each line are JSON, but they are just a collection of JSON(not JSON array).
+
+
 ## (Option)How to get Amazon Associate ID(tag)
 
 You can affiliate your shop with them. Refer following page:
