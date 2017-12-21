@@ -14,9 +14,11 @@ Sample Web Shop with Amazon Affiliate
 
 - Cloudant NoSQL database service
 
+    - https://cloudant.com/
+
     - Cloudant username & password
 
-- cf tool need to be installed
+- cf cli tool
 
     - https://github.com/cloudfoundry/cli/releases
 
@@ -35,23 +37,27 @@ Sample Web Shop with Amazon Affiliate
 
 - Login to IBM Cloud at first: http://bluemix.net/
 
-- Folk this repository into yours.
-
-- Edit manifest.yml for name and host.
+- Folk this repository into yours, if needed.
 
 - Click this button to deploy Node.js application server to IBM Cloud:
 
 [![Deploy to Bluemix](https://bluemix.net/deploy/button.png)](https://bluemix.net/deploy?repository=https://github.com/dotnsf/nodejsAmazonShop)
 
+    - Edit application name, if needed, before deployment.
+
 - Create IBM Cloudant NoSQL DB service, and bind it to application.
 
-## Install
+## Optional Install
 
-- (Option)If you have Amazon Associate account tag and/or Amazon Web Service key/secret, edit settings.js with them.
+- If you have Amazon Associate account tag and/or Amazon Web Service key/secret, edit settings.js with them.
+
+- Deploy application again, or run following command:
 
 - `$ npm install`
 
 ## Load sample
+
+- Git clone or Download this repository.
 
 - Login to IBM Cloud, and create IBM Cloudant service instance, if you don't have one yet.
 
