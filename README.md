@@ -37,7 +37,9 @@ Sample Web Shop with Amazon Affiliate
 
 - Login to IBM Cloud at first: http://bluemix.net/
 
-- Folk this repository into yours, if needed.
+- Folk this repository into yours.
+
+- Edit manifest.yml name, host, and domain as needed.
 
 - Click this button to deploy Node.js application server to IBM Cloud:
 
