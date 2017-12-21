@@ -43,12 +43,12 @@ function getItems( limit, skip ){
         for( var i = 0; i < items.length; i ++ ){
           var item = items[i];
           var id = item.id;
-          var code = item.doc.code;
-          var name = item.doc.name;
-          var brand = item.doc.brand;
-          var maker = item.doc.maker;
-          //var price = item.doc.price;
-          var asin = item.doc.asin;
+          var code = ( item.doc.code ? item.doc.code : '' );
+          var name = ( item.doc.name ? item.doc.name : '' );
+          var brand = ( item.doc.brand ? item.doc.brand : '' );
+          var maker = ( item.doc.maker ? item.doc.maker : '' );
+          //var price = ( item.doc.price ? item.doc.price : 0 );
+          var asin = ( item.doc.asin ? item.doc.asin : '' );
           var image_url = item.doc.image_url;
           var image_url2 = ( image_url ? image_url.split( 'SL160' ).join( 'SL300' ) : '' );
           var link = asin ? 'http://www.amazon.co.jp/dp/' + asin + '?tag=' + aws_tag + '&linkCode=as1&creative=6339' : '';
@@ -104,14 +104,14 @@ function searchItems( q, limit, skip ){
         for( var i = 0; i < items.length; i ++ ){
           var item = items[i];
           var id = item.id;
-          var code = item.fields.code;
-          var name = item.fields.name;
-          var brand = item.fields.brand;
-          var maker = item.fields.maker;
-//          var price = item.fields.price;
-          var asin = item.fields.asin;
+          var code = ( item.fields.code ? item.fields.code : '' );
+          var name = ( item.fields.name ? item.fields.name : '' );
+          var brand = ( item.fields.brand ? item.fields.brand : '' );
+          var maker = ( item.fields.maker ? item.fields.maker : '' );
+//          var price = ( item.fields.price ? item.fields.price : 0 );
+          var asin = ( item.fields.asin ? item.fields.asin : '' );
           var image_url = item.fields.image_url;
-          var image_url2 = image_url.split( 'SL160' ).join( 'SL300' );
+          var image_url2 = ( image_url ? image_url.split( 'SL160' ).join( 'SL300' ) : '' );
           var link = asin ? 'http://www.amazon.co.jp/dp/' + asin + '?tag=' + aws_tag + '&linkCode=as1&creative=6339' : '';
           $('#itemslistbody').append( '<tr><td>' + code + '<br/><a class="single iframe" rel="external" href="' + image_url2 + '" title="' + name + '"><img src="' + image_url + '" width="30" height="30"/></a></td><td>' + ( link ? '<a target="_blank" href="' + link + '">' + name + '</a>' : name ) + '</td><td>' + brand + '</td><td>' + maker + '</td></tr>' );
         }
