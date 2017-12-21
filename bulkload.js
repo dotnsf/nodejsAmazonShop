@@ -23,27 +23,42 @@ if( process.argv.length > 2 ){
 }
 
 
-//. DB追加
+//. DB
 var db = null;
-cloudant.db.get( settings.cloudant_db, function( err, body ){
-  if( err ){
-    if( err.statusCode == 404 ){
-      cloudant.db.create( settings.cloudant_db, function( err, body ){
-        if( err ){
-          db = null;
-        }else{
-          db = cloudant.db.use( settings.cloudant_db );
-          load();
-        }
-      });
+if( process.argv.length > 3 && process.argv[3] == 'u' ){
+  //. update(=delete+insert)
+  cloudant.db.destroy( settings.cloudant_db, function( err, body ){
+    cloudant.db.create( settings.cloudant_db, function( err, body ){
+      if( err ){
+        db = null;
+      }else{
+        db = cloudant.db.use( settings.cloudant_db );
+        load();
+      }
+    });
+  });
+}else{
+  //. insert only
+  cloudant.db.get( settings.cloudant_db, function( err, body ){
+    if( err ){
+      if( err.statusCode == 404 ){
+        cloudant.db.create( settings.cloudant_db, function( err, body ){
+          if( err ){
+            db = null;
+          }else{
+            db = cloudant.db.use( settings.cloudant_db );
+            load();
+          }
+        });
+      }else{
+        db = null;
+      }
     }else{
-      db = null;
+      db = cloudant.db.use( settings.cloudant_db );
+      load();
     }
-  }else{
-    db = cloudant.db.use( settings.cloudant_db );
-    load();
-  }
-});
+  });
+}
 
 
 function load(){

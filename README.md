@@ -67,11 +67,35 @@ Sample Web Shop with Amazon Affiliate
 
 - Load sample items record again:
 
-`$ node bulkload [items.json.txt]`
+`$ node bulkload [items.json.txt] [u]`
 
     - You can specify input file name.
 
-    - If not, bulkload.js will use items.json.txt.
+        - If not specified, bulkload.js will use items.json.txt.
+
+    - You can also specify update mode.
+
+        - If specified, bulkload.js will delete and insert items.
+
+        - If not specified, bulkload.js will just append items to current db.
+
+- There are some sample items files:
+
+    - items.json.txt: 
+
+        * Beauty: Skincare, Haircare, Bodycare, and Mens Beauty
+
+    - items.json.txt.15335631
+
+        * Sports: Boxing
+
+    - items.json.txt.344932011
+
+        * Sports: Exercise Goods
+
+    - items.json.txt.52912051
+
+        * Beauty: Mens Beauty
 
 
 ## How to use web application

@@ -50,7 +50,7 @@ function getItems( limit, skip ){
           //var price = item.doc.price;
           var asin = item.doc.asin;
           var image_url = item.doc.image_url;
-          var image_url2 = image_url.split( 'SL160' ).join( 'SL300' );
+          var image_url2 = ( image_url ? image_url.split( 'SL160' ).join( 'SL300' ) : '' );
           var link = asin ? 'http://www.amazon.co.jp/dp/' + asin + '?tag=' + aws_tag + '&linkCode=as1&creative=6339' : '';
           $('#itemslistbody').append( '<tr><td>' + code + '<br/><a class="single iframe" rel="external" href="' + image_url2 + '" title="' + name + '"><img src="' + image_url + '" width="30" height="30"/></a></td><td>' + ( link ? '<a target="_blank" href="' + link + '">' + name + '</a>' : name ) + '</td><td>' + brand + '</td><td>' + maker + '</td></tr>' );
         }
