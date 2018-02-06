@@ -21,6 +21,6 @@
     },
     "repository": {},
     "engines": {
-        "node": "8.x"
+        "node": "6.x"
     }
 }
