@@ -14,7 +14,6 @@
         "express": "4.1.x",
         "multer": "^1.1.0",
         "request": "^2.81.0",
-        "sleep": "5.1.1",
         "sync-request": "4.1.0",
         "urlencode": "1.1.0",
         "xml2js-parser": "1.1.1"
