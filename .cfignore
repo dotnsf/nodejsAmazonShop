@@ -1,4 +1,6 @@
 node_modules/
 package-lock.json
 settings.js.*
+items.json*
 !.gitkeep
+*.old

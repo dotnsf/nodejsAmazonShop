@@ -8,7 +8,7 @@ const nodes = [
   '52912051'  //. ビューティー/男性化粧品
 ];
 
-const wait = 3000000;      //. ウェイト（マイクロ秒）
+const wait = 3000;         //. ウェイト（ミリ秒）
 const min_price = 0;       //. 下限この額までの商品を検索する
 const max_price = 100000;  //. 上限この額までの商品を検索する
 const max_page = 5;        //. 上限このページまでの商品を検索する
@@ -27,7 +27,6 @@ var cloudantlib = require( 'cloudant' ),
     crypto = require( 'crypto' ),
     fs = require( 'fs' ),
     request = require( 'sync-request' ),
-    sleep = require( 'sleep' ),
     urlencode = require( 'urlencode' ),
     xml2js = require( 'xml2js-parser' );
 var settings = require( './settings' );
@@ -59,7 +58,7 @@ function getCodesWalkThrough( node, min, max, ceil ){
 function getCodesAmazonNodeMinMaxWalkThrough( node, min, max, page, maxpage ){
 //  return new Promise( function( resolve, reject ){
     if( page <= maxpage ){
-      sleep.usleep( wait );
+      sleep( wait );
       console.log( 'node = ' + node + ' : min = ' + min + ', max = ' + max + ', page = ' + page );
       getItemSearchAmazonAPI( node, min, max, page ).then( function( totalpage ){
         if( page < totalpage && page < maxpage ){
@@ -218,6 +217,19 @@ function nodeWalkThrough( idx ){
     });
   }
 }
+
+//. 2018/Feb/07
+//. https://qiita.com/albno273/items/c2d48fdcbf3a9a3434db
+function sleep( time ){
+  const d1 = new Date();
+  while( true ){
+    const d2 = new Date();
+    if( d2 - d1 > time ){
+      return;
+    }
+  }
+}
+
 
 //. メイン
 if( process.argv.length > 2 ){
