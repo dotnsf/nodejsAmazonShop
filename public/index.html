@@ -54,6 +54,9 @@ function getItems( limit, skip ){
           if( image_url.startsWith( 'http' ) && !image_url.startsWith( 'https' ) ){
             image_url = 'https' + image_url.substring( 4 );
           }
+          if(image_url.match(/ecx.images-amazon.com/)){
+            image_url = image_url.replace('ecx.images-amazon.com','images-na.ssl-images-amazon.com');
+          }
 
           var image_url2 = ( image_url ? image_url.split( 'SL160' ).join( 'SL300' ) : '' );
           var link = asin ? 'http://www.amazon.co.jp/dp/' + asin + '?tag=' + aws_tag + '&linkCode=as1&creative=6339' : '';
