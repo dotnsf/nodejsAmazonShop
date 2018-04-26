@@ -190,10 +190,6 @@ function getItemSearchAmazonAPI( node, min, max, page ){
           resolve( 0 );
       }
     }catch( err ){
-/* エラー
-<?xml version="1.0"?>
-<ItemSearchErrorResponse xmlns="http://ecs.amazonaws.com/doc/2009-01-06/"><Error><Code>RequestThrottled</Code><Message>AWS Access Key ID: AKIAJM3XACYDDRGTGZXQ. You are submitting requests too quickly. Please retry your requests at a slower rate.</Message></Error><RequestID>d092794d-6ac4-4435-b4a9-06486162eef2</RequestID></ItemSearchErrorResponse>
- */
       //console.log( err ); //. エラーはここ？
       resolve( -1 );
     }
